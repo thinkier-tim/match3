@@ -1,0 +1,56 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Scripts/root.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/fetcher.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/game.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/loading_animation.gd" type="Script" id=4]
+[ext_resource path="res://loader/LOADING INNER.png" type="Texture" id=5]
+[ext_resource path="res://loader/LOADING OUTER.png" type="Texture" id=6]
+[ext_resource path="res://loader/DOT INNER.png" type="Texture" id=7]
+[ext_resource path="res://loader/DOT OUTER.png" type="Texture" id=8]
+
+[node name="root" type="Node"]
+script = ExtResource( 1 )
+
+[node name="fetcher" type="HTTPRequest" parent="."]
+script = ExtResource( 2 )
+
+[node name="game" type="Node2D" parent="."]
+script = ExtResource( 3 )
+
+[node name="loading_animation" type="Node2D" parent="."]
+script = ExtResource( 4 )
+
+[node name="loading_inner" type="Sprite" parent="loading_animation"]
+position = Vector2( 240, 512 )
+texture = ExtResource( 5 )
+
+[node name="loading_outer" type="Sprite" parent="loading_animation"]
+position = Vector2( 240, 512 )
+texture = ExtResource( 6 )
+
+[node name="dot_inner" type="Sprite" parent="loading_animation"]
+position = Vector2( 440, 512 )
+texture = ExtResource( 7 )
+
+[node name="dot2_inner" type="Sprite" parent="loading_animation"]
+position = Vector2( 465, 512 )
+texture = ExtResource( 7 )
+
+[node name="dot3_inner" type="Sprite" parent="loading_animation"]
+position = Vector2( 490, 512 )
+texture = ExtResource( 7 )
+
+[node name="dot_outer" type="Sprite" parent="loading_animation"]
+position = Vector2( 440, 512 )
+texture = ExtResource( 8 )
+
+[node name="dot2_outer" type="Sprite" parent="loading_animation"]
+position = Vector2( 465, 512 )
+texture = ExtResource( 8 )
+
+[node name="dot3_outer" type="Sprite" parent="loading_animation"]
+position = Vector2( 490, 512 )
+texture = ExtResource( 8 )
+[connection signal="manifest_processed" from="fetcher" to="." method="_on_fetcher_manifest_processed"]
+[connection signal="texture_processed" from="fetcher" to="." method="_on_fetcher_texture_processed"]

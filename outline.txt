@@ -1,0 +1,70 @@
+display loading screen while:
+	check cached manifest vs online manifest
+	check localstorage for assets
+	download missing assets
+
+
+display main menu screen
+	wait for player input
+	play music (if enabled)
+	show ads (if enabled)
+
+on play_pressed:
+#	check for current level	# TODO: level editor!
+
+	if !new_game && saved_game_exists:
+		load_saved_level
+	else
+		start_at_first_level
+
+	generate playfield grid
+		populate with pieces
+		check for matches (we want none, initially)
+		check for potential matches (we need at least one)
+	fall pieces into playfield
+	wait for player move
+
+# don't let the player make a new move before the current one has finished processing
+var player_move_allowed	# do i need a state machine?
+
+onready var current_active_input := 0
+# are these screen coordinates, or grid?
+onready var first_move_point := 0,0
+onready var second_move_point := 0,0
+
+_player_move:
+	player_move_allowed = false
+	verify each_selected_piece(can_be_moved_by_player)
+		if yes:
+			swap pieces
+			check_for_matches
+				if matches_found > 0:
+					slime_propagation_allowed = false	# for this move
+				while count_matches() > 0:
+					# we need at least one match to prevent shuffling
+					matched_pieces.go_missing() # anim or whatever
+					until count_potential_matches() > 0:
+						generate_pieces([missing_pieces])
+					fall_in([new_pieces])
+				else:
+					undo_in_progress = true
+					swap pieces back
+					undo_in_progress = true
+		if no:
+			slime_propagation_allowed = true	# no move actually happened
+	if slime_propagation_allowed:
+		propagate_slime
+	slime_propagation_allowed = true	# for next move
+	player_move_allowed = true		# processing complete; allow another move to occur
+
+on_tap_or_click(mouse_down || mouse_up):
+	match current_active_input:
+		2:
+			current_active_input = 0
+			continue # fall through and continue comparing
+		1:
+			set_second_move_point(this_place)
+			_player_move
+		_:
+			set_first_move_point(this_place)
+	current_active_input += 1
